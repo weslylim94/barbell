@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+  <meta charset="utf-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<head>
+    <title>How Much Ya Lift?</title>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+</head>
+  <style>
+    body {
+      margin: 0;
+      font-family: Optima;
+      text-align: center;
+      font-size: 32;
+    }
+
+    .header {
+      background-color: white;
+    }
+  </style>
+
+<body>
+  <h1 style="font-size:36px">How Much Weight Do I Put on This 45lb Barbell?</h1>
+  <h3 style="opacity: 0.5">Enter a Weight in lbs:</h4>
+  <input type="text" id="myText" value=""><button onclick="myFunction()">Rack Weights</button>
+
+  <div id="lift">
+  
+  </div>
+  <p id="weight"></p>
+  <script>
+  var weight_list = [90, 70, 50, 20, 10, 5];
+
+  var WIDTH = window.innerWidth
+  var HEIGHT = window.innerHeight/2
+  
+  var translate = 'translate(' + (WIDTH / 2) + ',' + 200 + ')'
+
+  var svg = d3.select("#lift").append("svg")
+    .attr('width', WIDTH)
+    .attr('height', HEIGHT)
+
+  var dis_legend = 0
+  var weight_height = [70, 62, 52, 42, 32, 23];
+  var weight_width = [10, 9, 8, 7, 6, 5];
+  var weight_color = ["blue", "gold", "red", "green", "grey", "#8A2BE2"]
+  var weight_plate = [45, 35, 25, 10, 5, 2.5];
+
+  for(var i = 0; i < 6; i ++){
+    // svg.append('circle')
+    //   .attr('fill', weight_color[i])
+    //   .attr('r', weight_width[i] * 2.5)
+    //   .attr('cx', WIDTH/5 + dis_legend)
+    //   .attr('cy', 50);
+
+    svg.append('rect')
+      .attr('fill', weight_color[i])
+      .attr('width', 8)
+      .attr('height', weight_height[i])
+      .attr('x', WIDTH/5 + dis_legend)
+      .attr('y', 50 + (70 - weight_height[i]))
+      .attr('stroke', 'white');
+
+    svg.append('text')
+      .attr('x', WIDTH/5 + dis_legend + 3)
+      .attr('y', 134)
+      .attr('text-anchor', 'middle')
+      .text(weight_plate[i])
+      .attr('opacity', 0.6);
+
+    dis_legend += 22;
+  }
+
+  var barbell = svg.append('g')
+    .attr('transform', translate)
+// var points = [
+// // dig, x, y
+//   [0, 1, 0, "red"],
+//   [1, .809, .588, "blue"],
+//   [2, .309, .951, "purple"],
+//   [3, -.309, .951, "violet"],
+//   [4, -.809, .588, "orange"],
+//   [5, -1, 0, "cyan"],
+//   [6, -.809, -.588, "lightblue"],
+//   [7, -.309, -.951, "green"],
+//   [8, .309, -.951, "teal"],
+//   [9, .809, -.588, "pink"]
+// ];
+
+
+//   for(i = 0; i < 10; i ++){
+//     var legend = svg.append("line")
+//         .attr("x1", 500)
+//         .attr("y1", 50)
+//         .attr("x2", 500 + (points[i][1] * 30))
+//         .attr("y2", 50 + (points[i][2] * 30))
+//         .attr("stroke-width", 2)
+//       .attr("stroke", points[i][3])
+//       .text("I'm a label");
+
+//     svg.append("text")
+//       .attr("transform", "translate(" + (496.5 + (points[i][1] * 36)) + "," + (50 + (points[i][2] * 36)) + ")")
+//       .attr("dy", ".35em")
+//       .attr("text-anchor", "start")
+//       .style("fill", "black")
+//       .text(i);
+//   }
+//   svg.append("text")
+//     .attr("transform", "translate(" + 500 + "," + 100 + ")")
+//     .attr("dy", ".35em")
+//     .attr("text-anchor", "middle")
+//     .style("fill", "black")
+//     .text("Number Legend");
+
+  var radius = 4;
+  var shift = 0;
+  var bar = barbell.append("line")          // attach a line
+        .style("stroke", "black")  // colour the line
+        .attr("x1", -100)     // x position of the first end of the line
+        .attr("y1", 50)      // y position of the first end of the line
+        .attr("x2", 100)     // x position of the second end of the line
+        .attr("y2", 50)
+        .attr('fill', 'black')
+        .attr('stroke-width', 5)
+        .style('opacity', 0.7);
+
+  var barRight = barbell.append("line")          // attach a line
+      .style("stroke", "black")  // colour the line
+      .attr("x1", -170)     // x position of the first end of the line
+      .attr("y1", 50)      // y position of the first end of the line
+      .attr("x2", -100)     // x position of the second end of the line
+      .attr("y2", 50)
+      .attr('fill', 'black')
+      .attr('stroke-width', 8)
+      .style('opacity', 0.7);
+
+  var barLeft = barbell.append("line")          // attach a line
+        .style("stroke", "black")  // colour the line
+        .attr("x1", 100)     // x position of the first end of the line
+        .attr("y1", 50)      // y position of the first end of the line
+        .attr("x2", 170)     // x position of the second end of the line
+        .attr("y2", 50)
+        .attr('fill', 'black')
+        .attr('stroke-width', 8)
+        .style('opacity', 0.7);
+
+
+
+  function myFunction() {
+    var x = document.getElementById("myText").value;
+    d3.selectAll(".plateLeft").remove();
+    d3.selectAll(".plateRight").remove();
+    var ret = [];
+    if(x == ""){
+      document.getElementById("weight").innerHTML = "Input field is empty.";
+    } else if(isNaN(x)){
+      document.getElementById("weight").innerHTML = "That input is not a weight.";
+    } else if(x > 1000){
+      document.getElementById("weight").innerHTML = "Let's be honest, you are not that strong. Enter a lower weight.";
+    } else if(x < 45){
+      document.getElementById("weight").innerHTML = "Come on, that is the weight of the barbell. Enter a higher weight.";
+    } else {
+      var rem = (x % 5);
+      var flag = false;
+      var total = Number(x); 
+      if(rem != 0){
+        total = (5 - Number(rem)) + Number(x); 
+        console.log("round up");
+        flag = true;
+      }
+      display = total;
+      total = total - 45;
+      counter = 0;
+      for(var i = 0; i < 6; i ++){
+        sub = Math.floor(total/weight_list[i]);
+        ret.push(sub);
+        total = total % weight_list[i];
+
+        while(sub > 0){
+          var plate_45Left = barbell.append("rect")          // attach a line
+                .attr('class', 'plateLeft')
+                .attr('x', -1000 - (counter*8))
+                .attr('y', 15 + ((70 - weight_height[i])/2))
+                .attr('width', 8)
+                .attr('height', weight_height[i])
+                .attr('fill', weight_color[i])
+                .attr('stroke', 'white');
+          var rectTransitionLeft = d3.selectAll(".plateLeft").transition();
+          rectTransitionLeft.attr("transform", "translate(889)").duration(1000);
+
+
+          var plate_45Right = barbell.append("rect")          // attach a line
+                .attr('class', 'plateRight')
+                .attr('x', 1000 + (counter*8))
+                .attr('y', 15 + ((70 - weight_height[i])/2))
+                .attr('width', 8)
+                .attr('height', weight_height[i])
+                .attr('fill', weight_color[i])
+                .attr('stroke', 'white');
+          var rectTransitionRight = d3.selectAll(".plateRight").transition();
+          rectTransitionRight.attr("transform", "translate(-897)").duration(1000);
+          counter = counter + 1;
+          sub = sub - 1;
+          if(flag == true){
+            document.getElementById("weight").innerHTML = x + "lbs is not a possible weight combination. The weight is rounded up to nearest valid weight: <br> <br>" + display + " lbs";
+          } else {
+            document.getElementById("weight").innerHTML = display + " lbs";
+          }
+        }
+      }
+    }
+  }
+
+
+  </script>
+
+</body>
